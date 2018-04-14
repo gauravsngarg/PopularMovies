@@ -41,23 +41,25 @@ public class MainActivity extends AppCompatActivity {
         GridLayoutManager grid = new GridLayoutManager(this, 3);
         mMoviesList.setLayoutManager(grid);
 
-
-
-
         mMoviesList.setHasFixedSize(true);
 
-        new ShowMovieListTask().execute(makeSearchQuery());
+        list = new ArrayList<MovieItem>();
+
+        new ShowMovieListTask().execute(makeSearchQuery(1));
+        new ShowMovieListTask().execute(makeSearchQuery(2));
+        new ShowMovieListTask().execute(makeSearchQuery(3));
 
 
 
     }
 
-    public URL makeSearchQuery(){
-        URL url =  NetworkUtils.buildUrl(getString(R.string.api_key));
+    public URL makeSearchQuery(int page) {
+        URL url = NetworkUtils.buildUrl(getString(R.string.api_key),page);
+
         return url;
     }
 
-    public class ShowMovieListTask extends AsyncTask<URL, Void, String>{
+    public class ShowMovieListTask extends AsyncTask<URL, Void, String> {
 
         @Override
         protected void onPreExecute() {
@@ -85,15 +87,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String json) {
 
-           // Toast.makeText(MainActivity.this, "onPost: JSON" + (json==null), Toast.LENGTH_SHORT).show();
-            if(json != null){
+            // Toast.makeText(MainActivity.this, "onPost: JSON" + (json==null), Toast.LENGTH_SHORT).show();
+            if (json != null) {
                 //ToDo Add View to update after Download
                 try {
                     JSONObject jsonObject = new JSONObject(json);
                     JSONArray jsonArray = jsonObject.getJSONArray("results");
 
-                    list = new ArrayList<MovieItem>();
-                    for(int i =0 ; i < jsonArray.length(); i++){
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
 
                         JSONObject js = jsonArray.getJSONObject(i);
                         MovieItem item = new MovieItem();
@@ -108,14 +110,13 @@ public class MainActivity extends AppCompatActivity {
                     }
 
 
-
-                   // Toast.makeText(MainActivity.this, list.get(0).getMovieTitle(), Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(MainActivity.this, list.get(0).getMovieTitle(), Toast.LENGTH_SHORT).show();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                if(!list.isEmpty()) {
+                if (!list.isEmpty()) {
                     adapter = new MovieAdapter(list.size(), MainActivity.this, list);
                     mMoviesList.setAdapter(adapter);
                 }
