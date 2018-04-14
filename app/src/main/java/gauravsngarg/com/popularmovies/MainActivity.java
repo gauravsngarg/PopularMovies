@@ -3,6 +3,7 @@ package gauravsngarg.com.popularmovies;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import org.json.JSONArray;
@@ -14,6 +15,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import gauravsngarg.com.popularmovies.adapter.MovieAdapter;
 import gauravsngarg.com.popularmovies.model.MovieItem;
 import gauravsngarg.com.popularmovies.utils.NetworkUtils;
 
@@ -25,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
     private List<MovieItem> list;
 
+    private MovieAdapter adapter;
+
     //public final String api_key = getApplicationContext().getString(R.string.api_key);
 
     @Override
@@ -33,9 +37,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mMoviesList = (RecyclerView) findViewById(R.id.rv_movies);
+
+        GridLayoutManager grid = new GridLayoutManager(this, 3);
+        mMoviesList.setLayoutManager(grid);
+
+
+
+
         mMoviesList.setHasFixedSize(true);
 
         new ShowMovieListTask().execute(makeSearchQuery());
+
+
+
     }
 
     public URL makeSearchQuery(){
@@ -99,6 +113,11 @@ public class MainActivity extends AppCompatActivity {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                }
+
+                if(!list.isEmpty()) {
+                    adapter = new MovieAdapter(list.size(), MainActivity.this, list);
+                    mMoviesList.setAdapter(adapter);
                 }
 
             }
