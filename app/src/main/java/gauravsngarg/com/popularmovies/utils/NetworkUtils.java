@@ -28,14 +28,15 @@ public class NetworkUtils {
 
     final static String PARAM_PAGE = "page";
 
-    final static String page = "1";
+     static String page = "1";
 
-    public static URL buildUrl(String api_key) {
+    public static URL buildUrl(String api_key, int mPage) {
         MOVIE_API_KEY = api_key;
+        page = mPage +"";
         Uri builtURI = Uri.parse(THE_MOVIE_DB_API_URL).buildUpon()
                 .appendQueryParameter(PARAM_API_KEY, MOVIE_API_KEY)
                 .appendQueryParameter(PARAM_Language, language)
-                .appendQueryParameter(PARAM_PAGE, page)
+                .appendQueryParameter(PARAM_PAGE, mPage+"")
                 .build();
 
 
