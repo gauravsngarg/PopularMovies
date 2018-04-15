@@ -27,10 +27,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoviesViewHo
     private static List<MovieItem> list;
     private static int count;
 
+    private MovieListitemClickListner mOnClickListner;
 
-    public MovieAdapter(int movieCount, Context mContext, List<MovieItem> listitem) {
+    public MovieAdapter(int movieCount, List<MovieItem> listitem, MovieListitemClickListner listener) {
         mMovieItemsCount = movieCount;
         list = listitem;
+        mOnClickListner = listener;
         count = 0;
     }
 
@@ -56,12 +58,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoviesViewHo
     public void onBindViewHolder(MoviesViewHolder holder, int position) {
     }
 
+    public interface MovieListitemClickListner{
+        void onMovieListItemClick(int clickedItemIndex);
+    }
+
     @Override
     public int getItemCount() {
         return mMovieItemsCount;
     }
 
-    class MoviesViewHolder extends RecyclerView.ViewHolder {
+    class MoviesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView mMovieDetail;
         ImageView mMovieItem;
@@ -71,6 +77,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoviesViewHo
 
             mMovieDetail = (TextView) itemView.findViewById(R.id.tv_item);
             mMovieItem = (ImageView) itemView.findViewById(R.id.iv_movieitem);
+            itemView.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            int clickedPosition = getAdapterPosition();
+            mOnClickListner.onMovieListItemClick(clickedPosition);
 
         }
     }

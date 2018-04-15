@@ -1,5 +1,6 @@
 package gauravsngarg.com.popularmovies;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +20,7 @@ import gauravsngarg.com.popularmovies.adapter.MovieAdapter;
 import gauravsngarg.com.popularmovies.model.MovieItem;
 import gauravsngarg.com.popularmovies.utils.NetworkUtils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieListitemClickListner{
 
     private static int NUMBER_OF_LISTITEMS = 20;
 
@@ -29,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
     private MovieAdapter adapter;
 
-    //public final String api_key = getApplicationContext().getString(R.string.api_key);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +57,22 @@ public class MainActivity extends AppCompatActivity {
         URL url = NetworkUtils.buildUrl(getString(R.string.api_key),page);
 
         return url;
+    }
+
+    @Override
+    public void onMovieListItemClick(int clickedItemIndex) {
+        String movieClicked = list.get(clickedItemIndex).getMovieTitle();
+
+        MovieItem itemClicked = list.get(clickedItemIndex);
+
+        Intent i = new Intent(this, MoviePage.class);
+        i.putExtra("title", itemClicked.getMovieTitle());
+        i.putExtra("overview",itemClicked.getMoviePlotSynopsis());
+        i.putExtra("rating",itemClicked.getMovieUserRating());
+        i.putExtra("release_date", itemClicked.getMovieReleaseDate());
+        i.putExtra("url", itemClicked.getMoviePosterPath());
+
+        startActivity(i);
     }
 
     public class ShowMovieListTask extends AsyncTask<URL, Void, String> {
@@ -87,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String json) {
 
-            // Toast.makeText(MainActivity.this, "onPost: JSON" + (json==null), Toast.LENGTH_SHORT).show();
             if (json != null) {
                 //ToDo Add View to update after Download
                 try {
@@ -110,14 +125,13 @@ public class MainActivity extends AppCompatActivity {
                     }
 
 
-                    // Toast.makeText(MainActivity.this, list.get(0).getMovieTitle(), Toast.LENGTH_SHORT).show();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
                 if (!list.isEmpty()) {
-                    adapter = new MovieAdapter(list.size(), MainActivity.this, list);
+                    adapter = new MovieAdapter(list.size(), list, MainActivity.this);
                     mMoviesList.setAdapter(adapter);
                 }
 
