@@ -54,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     }
 
     public URL makeSearchQuery(int page) {
+
+        //API Link:https://developers.themoviedb.org/3/movies/get-popular-movies
+        
         URL url = NetworkUtils.buildUrl(getString(R.string.api_key),page);
 
         return url;
