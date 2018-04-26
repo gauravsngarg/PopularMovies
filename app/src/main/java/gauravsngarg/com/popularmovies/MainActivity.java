@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,22 +17,19 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import gauravsngarg.com.popularmovies.adapter.MovieAdapter;
 import gauravsngarg.com.popularmovies.model.MovieItem;
 import gauravsngarg.com.popularmovies.utils.NetworkUtils;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieListitemClickListner{
-
-    private static int NUMBER_OF_LISTITEMS = 20;
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieListitemClickListner {
 
     private RecyclerView mMoviesList;
-
     private List<MovieItem> list;
-
     private MovieAdapter adapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,38 +40,31 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         GridLayoutManager grid = new GridLayoutManager(this, 3);
         mMoviesList.setLayoutManager(grid);
-
         mMoviesList.setHasFixedSize(true);
-
         list = new ArrayList<MovieItem>();
 
         new ShowMovieListTask().execute(makeSearchQuery(1));
-        new ShowMovieListTask().execute(makeSearchQuery(2));
-        new ShowMovieListTask().execute(makeSearchQuery(3));
-
+        // new ShowMovieListTask().execute(makeSearchQuery(2));
+        // new ShowMovieListTask().execute(makeSearchQuery(3));
 
 
     }
 
     public URL makeSearchQuery(int page) {
-
         //API Link:https://developers.themoviedb.org/3/movies/get-popular-movies
-        
-        URL url = NetworkUtils.buildUrl(getString(R.string.api_key),page);
-
+        URL url = NetworkUtils.buildUrl(getString(R.string.api_key), page);
         return url;
     }
 
     @Override
     public void onMovieListItemClick(int clickedItemIndex) {
         String movieClicked = list.get(clickedItemIndex).getMovieTitle();
-
         MovieItem itemClicked = list.get(clickedItemIndex);
 
         Intent i = new Intent(this, MoviePage.class);
         i.putExtra("title", itemClicked.getMovieTitle());
-        i.putExtra("overview",itemClicked.getMoviePlotSynopsis());
-        i.putExtra("rating",itemClicked.getMovieUserRating());
+        i.putExtra("overview", itemClicked.getMoviePlotSynopsis());
+        i.putExtra("rating", itemClicked.getMovieUserRating());
         i.putExtra("release_date", itemClicked.getMovieReleaseDate());
         i.putExtra("url", itemClicked.getMoviePosterPath());
 
@@ -99,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 e.printStackTrace();
             }
 
-
             return movieList;
         }
 
@@ -107,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         protected void onPostExecute(String json) {
 
             if (json != null) {
-                //ToDo Add View to update after Download
+                //ToDo Add View to update after Download ProgressBar Remove
                 try {
                     JSONObject jsonObject = new JSONObject(json);
                     JSONArray jsonArray = jsonObject.getJSONArray("results");
@@ -127,8 +119,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                         list.add(item);
                     }
 
-
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -142,5 +132,57 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.moviesort, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_sortby_highrated) {
+            sortByHighRated(item);
+            adapter = new MovieAdapter(list.size(),list, MainActivity.this);
+            mMoviesList.setAdapter(adapter);
+
+            return true;
+        } else if (item.getItemId() == R.id.action_sortby_mostpopular) {
+            sortByMostPopular(item);
+            adapter = new MovieAdapter(list.size(),list, MainActivity.this);
+            mMoviesList.setAdapter(adapter);
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void sortByHighRated(MenuItem item) {
+        Collections.sort(list, new Comparator<MovieItem>() {
+            @Override
+            public int compare(MovieItem o1, MovieItem o2) {
+                if (Float.parseFloat(o1.getMovieUserRating()) > Float.parseFloat(o2.getMovieUserRating()))
+                    return -1;
+                else if (Float.parseFloat(o1.getMovieUserRating()) < Float.parseFloat(o2.getMovieUserRating()))
+                    return 1;
+                else
+                    return 0;
+            }
+        });
+    }
+
+    private void sortByMostPopular(MenuItem item) {
+        Collections.sort(list, new Comparator<MovieItem>() {
+            @Override
+            public int compare(MovieItem o1, MovieItem o2) {
+                if (Float.parseFloat(o1.getMoviePopularity()) > Float.parseFloat(o2.getMoviePopularity()))
+                    return -1;
+                else if (Float.parseFloat(o1.getMoviePopularity()) < Float.parseFloat(o2.getMoviePopularity()))
+                    return 1;
+                else
+                    return 0;
+            }
+        });
+    }
 }

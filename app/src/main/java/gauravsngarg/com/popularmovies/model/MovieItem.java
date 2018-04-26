@@ -1,10 +1,12 @@
 package gauravsngarg.com.popularmovies.model;
 
+import android.support.annotation.NonNull;
+
 /**
  * Created by GG on 14/04/18.
  */
 
-public class MovieItem {
+public class MovieItem implements Comparable<MovieItem>{
 
     String movieTitle;
     String moviePosterPath;
@@ -74,5 +76,15 @@ public class MovieItem {
 
     public void setMoviePopularity(String moviePopularity) {
         this.moviePopularity = moviePopularity;
+    }
+
+    @Override
+    public int compareTo(@NonNull MovieItem o) {
+        if(Float.parseFloat(moviePopularity) > Float.parseFloat(o.moviePopularity))
+            return -1;
+        else if (Float.parseFloat(moviePopularity) < Float.parseFloat(o.moviePopularity))
+            return 1;
+        else
+            return 0;
     }
 }
