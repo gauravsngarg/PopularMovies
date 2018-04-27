@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private List<MovieItem> list;
     private MovieAdapter adapter;
 
+    private ProgressBar mProgressBar;
+
     private static Boolean MENU_FLAG_MOST_POPULAR = false;
     private static Boolean MENU_FLAG_HIGH_RATED = true;
 
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         setContentView(R.layout.activity_main);
 
         mMoviesList = (RecyclerView) findViewById(R.id.rv_movies);
+        mProgressBar = (ProgressBar) findViewById(R.id.pb_progress_indicator);
 
         GridLayoutManager grid = new GridLayoutManager(this, 3);
         mMoviesList.setLayoutManager(grid);
@@ -79,6 +84,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
+            mProgressBar.setVisibility(View.VISIBLE);
+
 
             //ToDo Add Progress Bar Start
         }
@@ -130,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                     adapter = new MovieAdapter(list.size(), list, MainActivity.this);
                     mMoviesList.setAdapter(adapter);
                 }
+
+                mProgressBar.setVisibility(View.INVISIBLE);
 
             }
         }
