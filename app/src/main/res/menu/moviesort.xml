@@ -6,15 +6,15 @@
 
     <item
         android:id="@+id/action_sortby_mostpopular"
-        android:orderInCategory="1"
-        android:title="Most Popular"
+        android:orderInCategory="2"
+        android:title="Sort By Most Popular"
         android:visible="true"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_sortby_highrated"
-        android:orderInCategory="1"
-        android:title="High Rated"
+        android:orderInCategory="3"
+        android:title="Sort By High Rated"
         android:visible="true"
         app:showAsAction="never"/>
 </menu>

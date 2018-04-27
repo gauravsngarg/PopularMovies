@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private List<MovieItem> list;
     private MovieAdapter adapter;
 
+    private static Boolean MENU_FLAG_MOST_POPULAR = false;
+    private static Boolean MENU_FLAG_HIGH_RATED = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,21 +139,39 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.moviesort, menu);
+        menu.getItem(0).setVisible(MENU_FLAG_MOST_POPULAR);
+        menu.getItem(1).setVisible(MENU_FLAG_HIGH_RATED);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        menu.getItem(0).setVisible(MENU_FLAG_MOST_POPULAR);
+        menu.getItem(1).setVisible(MENU_FLAG_HIGH_RATED);
+
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_sortby_highrated) {
             sortByHighRated(item);
-            adapter = new MovieAdapter(list.size(),list, MainActivity.this);
+            adapter = new MovieAdapter(list.size(), list, MainActivity.this);
             mMoviesList.setAdapter(adapter);
+
+            MENU_FLAG_HIGH_RATED = false;
+            MENU_FLAG_MOST_POPULAR = true;
 
             return true;
         } else if (item.getItemId() == R.id.action_sortby_mostpopular) {
             sortByMostPopular(item);
-            adapter = new MovieAdapter(list.size(),list, MainActivity.this);
+            adapter = new MovieAdapter(list.size(), list, MainActivity.this);
             mMoviesList.setAdapter(adapter);
+
+            MENU_FLAG_HIGH_RATED = true;
+            MENU_FLAG_MOST_POPULAR = false;
 
             return true;
         }
