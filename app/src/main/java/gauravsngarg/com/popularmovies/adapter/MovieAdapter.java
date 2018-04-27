@@ -16,9 +16,6 @@ import gauravsngarg.com.popularmovies.R;
 import gauravsngarg.com.popularmovies.model.MovieItem;
 import gauravsngarg.com.popularmovies.utils.GenerateMovieThumbnailsURL;
 
-/**
- * Created by GG on 14/04/18.
- */
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoviesViewHolder> {
 
@@ -26,7 +23,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoviesViewHo
     private static List<MovieItem> list;
     private static int count;
 
-    private MovieListitemClickListner mOnClickListner;
+    private final MovieListitemClickListner mOnClickListner;
 
     public MovieAdapter(int movieCount, List<MovieItem> listitem, MovieListitemClickListner listener) {
         mMovieItemsCount = movieCount;
@@ -44,8 +41,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoviesViewHo
         View view = inflator.inflate(R.layout.list_item, parent, false);
         MoviesViewHolder viewHolder = new MoviesViewHolder(view);
 
-        URL url = null;
-        url = GenerateMovieThumbnailsURL.buildURL(list.get(count).getMoviePosterPath());
+        URL url = GenerateMovieThumbnailsURL.buildURL(list.get(count).getMoviePosterPath());
         Picasso.with(mContext).load(url.toString()).into(viewHolder.mMovieItem);
 
         count++;
@@ -67,7 +63,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoviesViewHo
 
     class MoviesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        ImageView mMovieItem;
+        final ImageView mMovieItem;
 
         public MoviesViewHolder(View itemView) {
             super(itemView);

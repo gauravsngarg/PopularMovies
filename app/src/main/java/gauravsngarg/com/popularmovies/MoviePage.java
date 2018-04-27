@@ -13,12 +13,12 @@ import gauravsngarg.com.popularmovies.utils.GenerateMovieThumbnailsURL;
 
 public class MoviePage extends AppCompatActivity {
 
-    TextView tv_title;
-    TextView tv_overview;
-    TextView tv_user_rating;
-    TextView tv_release_date;
+    private TextView tv_title;
+    private TextView tv_overview;
+    private TextView tv_user_rating;
+    private TextView tv_release_date;
 
-    ImageView iv_movieposter;
+    private ImageView iv_movieposter;
 
 
 

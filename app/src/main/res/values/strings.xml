@@ -8,4 +8,10 @@
     <string name="tv_user_rating">rating</string>
     <string name="tv_release_date">release_date</string>
     <string name="movie_url">url</string>
+    <string name="movie_title">Movie Title:</string>
+    <string name="overview">Overview :</string>
+    <string name="user_rating">User Rating:</string>
+    <string name="release_date">Release Date:</string>
+    <string name="sort_by_most_popular">Sort By Most Popular</string>
+    <string name="sort_by_high_rated">Sort By High Rated</string>
 </resources>

@@ -5,21 +5,12 @@ import android.net.Uri;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/**
- * Created by GG on 15/04/18.
- */
 
 public class GenerateMovieThumbnailsURL {
 
-    final static String BASE_MOVIE_THUMBNAIL_URL = "https://image.tmdb.org/t/p/";
+    private final static String BASE_MOVIE_THUMBNAIL_URL = "https://image.tmdb.org/t/p/";
 
-    final static String imageQuality = "w185";
-
-    String imageURL;
-
-    GenerateMovieThumbnailsURL(String imageExtendedURI) {
-        imageURL = imageExtendedURI;
-    }
+    private final static String imageQuality = "w185";
 
     public static URL buildURL(String imageLink) {
 

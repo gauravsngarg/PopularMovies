@@ -2,32 +2,19 @@ package gauravsngarg.com.popularmovies.model;
 
 import android.support.annotation.NonNull;
 
-/**
- * Created by GG on 14/04/18.
- */
 
+@SuppressWarnings("ALL")
 public class MovieItem implements Comparable<MovieItem>{
 
-    String movieTitle;
-    String moviePosterPath;
-    String moviePlotSynopsis;
-    String movieUserRating;
-    String movieReleaseDate;
-    String moviePopularity;
+    private String movieTitle;
+    private String moviePosterPath;
+    private String moviePlotSynopsis;
+    private String movieUserRating;
+    private String movieReleaseDate;
+    private String moviePopularity;
 
     public MovieItem(){
 
-    }
-
-    public MovieItem(String movieTitle, String moviePosterPath,
-                     String moviePlotSynopsis, String movieUserRating,
-                     String movieReleaseDate, String moviePopularity){
-        this.movieTitle = movieTitle;
-        this.moviePosterPath = moviePosterPath;
-        this.moviePlotSynopsis = moviePlotSynopsis;
-        this.movieUserRating = movieUserRating;
-        this.movieReleaseDate = movieReleaseDate;
-        this.moviePopularity = moviePopularity;
     }
 
     public String getMovieTitle() {

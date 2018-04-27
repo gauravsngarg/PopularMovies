@@ -21,7 +21,7 @@
             <ImageView
                 android:id="@+id/iv_movieposter"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
         </FrameLayout>
 
         <LinearLayout
@@ -33,11 +33,11 @@
             <TextView
                 style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="wrap_content"
-                android:paddingTop="8dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:text="Movie Title:"
-                android:textSize="20sp" />
+                android:paddingTop="8dp"
+                android:text="@string/movie_title"
+                android:textSize="20sp"/>
 
 
             <TextView
@@ -46,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:textSize="20sp" />
+                android:textSize="20sp"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -66,8 +66,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:text="Overview : "
-                android:textSize="16sp" />
+                android:text="@string/overview"
+                android:textSize="16sp"/>
 
             <TextView
                 android:id="@+id/movieoverview"
@@ -75,7 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:textSize="16sp" />
+                android:textSize="16sp"/>
 
         </LinearLayout>
 
@@ -90,8 +90,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:text="User Rating: "
-                android:textSize="16sp" />
+                android:text="@string/user_rating"
+                android:textSize="16sp"/>
 
             <TextView
                 android:id="@+id/user_rating"
@@ -99,7 +99,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:textSize="16sp" />
+                android:textSize="16sp"/>
 
         </LinearLayout>
 
@@ -113,8 +113,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:text="Release Date: "
-                android:textSize="16sp" />
+                android:text="@string/release_date"
+                android:textSize="16sp"/>
 
             <TextView
                 android:id="@+id/release_date"
@@ -122,9 +122,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:textSize="16sp" />
+                android:textSize="16sp"/>
         </LinearLayout>
 
     </LinearLayout>
-
 </LinearLayout>
