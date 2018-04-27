@@ -35,18 +35,19 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private ProgressBar mProgressBar;
 
-    private static Boolean MENU_MOST_POPULAR_VALUE = false;
-    private static Boolean MENU_HIGH_RATED_VALUE = true;
+    private boolean MENU_MOST_POPULAR_VALUE = false;
+    private boolean MENU_HIGH_RATED_VALUE = true;
 
-
-
-    private static String MENU_MOST_POPULAR_KEY = "mostpopular";
-    private static String MENU_HIGH_RATED_KEY = "highrated";
+    private String MENU_MOST_POPULAR_KEY;
+    private String MENU_HIGH_RATED_KEY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        MENU_MOST_POPULAR_KEY =getResources().getString(R.string.menu_most_popular_key);
+        MENU_HIGH_RATED_KEY = getString(R.string.menu_high_rated_key);
 
         if(savedInstanceState != null){
             MENU_MOST_POPULAR_VALUE = Boolean.parseBoolean(savedInstanceState.getString(MENU_MOST_POPULAR_KEY));
@@ -94,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
             mProgressBar.setVisibility(View.VISIBLE);
         }
 
@@ -150,10 +150,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                         MENU_MOST_POPULAR_VALUE = true;
                         MENU_HIGH_RATED_VALUE = false;
                     }
-                }
 
-
-                if (!list.isEmpty()) {
                     adapter = new MovieAdapter(list.size(), list, MainActivity.this);
                     mMoviesList.setAdapter(adapter);
                 }
@@ -166,11 +163,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-
-        outState.putString(MENU_HIGH_RATED_KEY, MENU_HIGH_RATED_VALUE.toString());
-        outState.putString(MENU_MOST_POPULAR_KEY, MENU_MOST_POPULAR_VALUE.toString());
+        outState.putString(MENU_HIGH_RATED_KEY, MENU_HIGH_RATED_VALUE +"");
+        outState.putString(MENU_MOST_POPULAR_KEY, MENU_MOST_POPULAR_VALUE + "");
         super.onSaveInstanceState(outState);
-
     }
 
     @Override
@@ -178,8 +173,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.moviesort, menu);
-//        menu.getItem(0).setVisible(MENU_MOST_POPULAR_VALUE);
-//        menu.getItem(1).setVisible(MENU_HIGH_RATED_VALUE);
         return true;
     }
 
@@ -187,8 +180,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.getItem(0).setVisible(MENU_MOST_POPULAR_VALUE);
         menu.getItem(1).setVisible(MENU_HIGH_RATED_VALUE);
-
-
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -202,7 +193,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
             MENU_HIGH_RATED_VALUE = false;
             MENU_MOST_POPULAR_VALUE = true;
-
             return true;
         } else if (item.getItemId() == R.id.action_sortby_mostpopular) {
             sortByMostPopular();
@@ -211,7 +201,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
             MENU_HIGH_RATED_VALUE = true;
             MENU_MOST_POPULAR_VALUE = false;
-
             return true;
         }
 

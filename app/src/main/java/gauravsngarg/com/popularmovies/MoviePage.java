@@ -37,13 +37,12 @@ public class MoviePage extends AppCompatActivity {
 
         iv_movieposter = (ImageView) findViewById(R.id.iv_movieposter);
 
-        tv_title.setText(extras.getString("title"));
-        tv_overview.setText(extras.getString("overview"));
-        tv_user_rating.setText(extras.getString("rating"));
-        tv_release_date.setText(extras.getString("release_date"));
+        tv_title.setText(extras.getString(getString(R.string.tv_title)));
+        tv_overview.setText(extras.getString(getString(R.string.tv_overview)));
+        tv_user_rating.setText(extras.getString(getString(R.string.tv_user_rating)));
+        tv_release_date.setText(extras.getString(getString(R.string.tv_release_date)));
 
-        String url1 = extras.getString("url");
-        URL url = GenerateMovieThumbnailsURL.buildURL(url1);
+        URL url = GenerateMovieThumbnailsURL.buildURL(extras.getString(getString(R.string.movie_url)));
 
         Picasso.with(this).load(url.toString()).into(iv_movieposter);
     }
