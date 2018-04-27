@@ -86,9 +86,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             super.onPreExecute();
 
             mProgressBar.setVisibility(View.VISIBLE);
-
-
-            //ToDo Add Progress Bar Start
         }
 
         @Override
@@ -110,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         protected void onPostExecute(String json) {
 
             if (json != null) {
-                //ToDo Add View to update after Download ProgressBar Remove
                 try {
                     JSONObject jsonObject = new JSONObject(json);
                     JSONArray jsonArray = jsonObject.getJSONArray("results");
