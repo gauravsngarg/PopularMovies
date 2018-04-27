@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -34,6 +33,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoviesViewHo
         list = listitem;
         mOnClickListner = listener;
         count = 0;
+
     }
 
     @Override
@@ -43,8 +43,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoviesViewHo
 
         View view = inflator.inflate(R.layout.list_item, parent, false);
         MoviesViewHolder viewHolder = new MoviesViewHolder(view);
-        viewHolder.mMovieDetail.setText(list.get(count).getMovieTitle());
-        viewHolder.mMovieDetail.setVisibility(View.GONE);
 
         URL url = null;
         url = GenerateMovieThumbnailsURL.buildURL(list.get(count).getMoviePosterPath());
@@ -69,20 +67,19 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoviesViewHo
 
     class MoviesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        TextView mMovieDetail;
         ImageView mMovieItem;
 
         public MoviesViewHolder(View itemView) {
             super(itemView);
 
-            mMovieDetail = (TextView) itemView.findViewById(R.id.tv_item);
             mMovieItem = (ImageView) itemView.findViewById(R.id.iv_movieitem);
             itemView.setOnClickListener(this);
-
         }
 
         @Override
         public void onClick(View v) {
+
+
             int clickedPosition = getAdapterPosition();
             mOnClickListner.onMovieListItemClick(clickedPosition);
 
