@@ -19,13 +19,12 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import gauravsngarg.com.popularmovies.adapter.MovieAdapter;
 import gauravsngarg.com.popularmovies.model.MovieItem;
 import gauravsngarg.com.popularmovies.utils.NetworkUtils;
+import gauravsngarg.com.popularmovies.utils.NetworkUtilsTopRated;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieListitemClickListner {
 
@@ -46,10 +45,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MENU_MOST_POPULAR_KEY =getResources().getString(R.string.menu_most_popular_key);
+        MENU_MOST_POPULAR_KEY = getResources().getString(R.string.menu_most_popular_key);
         MENU_HIGH_RATED_KEY = getString(R.string.menu_high_rated_key);
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             MENU_MOST_POPULAR_VALUE = Boolean.parseBoolean(savedInstanceState.getString(MENU_MOST_POPULAR_KEY));
             MENU_HIGH_RATED_VALUE = Boolean.parseBoolean(savedInstanceState.getString(MENU_HIGH_RATED_KEY));
         }
@@ -62,16 +61,27 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mMoviesList.setHasFixedSize(true);
         list = new ArrayList<MovieItem>();
 
-        new ShowMovieListTask().execute(makeSearchQuery(1));
+        if (!MENU_MOST_POPULAR_VALUE)
+            new ShowMovieListTask().execute(makeSearchQuery(1, 1));
+        else if (!MENU_HIGH_RATED_VALUE)
+            new ShowMovieListTask().execute(makeSearchQuery(1, 2));
+
+        // new ShowMovieListTask().execute(makeSearchQuery(1));
         // new ShowMovieListTask().execute(makeSearchQuery(2));
         // new ShowMovieListTask().execute(makeSearchQuery(3));
 
 
     }
 
-    public URL makeSearchQuery(int page) {
+    public URL makeSearchQuery(int page, int order) {
         //API Link:https://developers.themoviedb.org/3/movies/get-popular-movies
-        URL url = NetworkUtils.buildUrl(getString(R.string.api_key), page);
+
+        URL url = null;
+        if (order == 1)
+            url = NetworkUtils.buildUrl(getString(R.string.api_key), page);
+        else if (order == 2)
+            url = NetworkUtilsTopRated.buildUrl(getString(R.string.api_key), page);
+
         return url;
     }
 
@@ -95,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            list.clear();
             mProgressBar.setVisibility(View.VISIBLE);
         }
 
@@ -105,7 +116,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             String movieList = null;
 
             try {
-                movieList = NetworkUtils.getResponseFromHttpUrl(searchURL);
+                if (MENU_MOST_POPULAR_VALUE)
+                    movieList = NetworkUtils.getResponseFromHttpUrl(searchURL);
+                else if (MENU_HIGH_RATED_VALUE)
+                    movieList = NetworkUtilsTopRated.getResponseFromHttpUrl(searchURL);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -142,11 +156,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
                 if (!list.isEmpty()) {
                     if (MENU_HIGH_RATED_VALUE) {
-                        sortByMostPopular();
                         MENU_MOST_POPULAR_VALUE = false;
                         MENU_HIGH_RATED_VALUE = true;
                     } else if (MENU_MOST_POPULAR_VALUE) {
-                        sortByHighRated();
                         MENU_MOST_POPULAR_VALUE = true;
                         MENU_HIGH_RATED_VALUE = false;
                     }
@@ -163,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString(MENU_HIGH_RATED_KEY, MENU_HIGH_RATED_VALUE +"");
+        outState.putString(MENU_HIGH_RATED_KEY, MENU_HIGH_RATED_VALUE + "");
         outState.putString(MENU_MOST_POPULAR_KEY, MENU_MOST_POPULAR_VALUE + "");
         super.onSaveInstanceState(outState);
     }
@@ -187,17 +199,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.action_sortby_highrated) {
-            sortByHighRated();
-            adapter = new MovieAdapter(list.size(), list, MainActivity.this);
-            mMoviesList.setAdapter(adapter);
 
+            new ShowMovieListTask().execute(makeSearchQuery(1, 2));
             MENU_HIGH_RATED_VALUE = false;
             MENU_MOST_POPULAR_VALUE = true;
             return true;
         } else if (item.getItemId() == R.id.action_sortby_mostpopular) {
-            sortByMostPopular();
-            adapter = new MovieAdapter(list.size(), list, MainActivity.this);
-            mMoviesList.setAdapter(adapter);
+            new ShowMovieListTask().execute(makeSearchQuery(1, 1));
 
             MENU_HIGH_RATED_VALUE = true;
             MENU_MOST_POPULAR_VALUE = false;
@@ -206,33 +214,5 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void sortByHighRated() {
-        Collections.sort(list, new Comparator<MovieItem>() {
-            @Override
-            public int compare(MovieItem o1, MovieItem o2) {
-                if (Float.parseFloat(o1.getMovieUserRating()) > Float.parseFloat(o2.getMovieUserRating()))
-                    return -1;
-                else if (Float.parseFloat(o1.getMovieUserRating()) < Float.parseFloat(o2.getMovieUserRating()))
-                    return 1;
-                else
-                    return 0;
-            }
-        });
-    }
-
-    private void sortByMostPopular() {
-        Collections.sort(list, new Comparator<MovieItem>() {
-            @Override
-            public int compare(MovieItem o1, MovieItem o2) {
-                if (Float.parseFloat(o1.getMoviePopularity()) > Float.parseFloat(o2.getMoviePopularity()))
-                    return -1;
-                else if (Float.parseFloat(o1.getMoviePopularity()) < Float.parseFloat(o2.getMoviePopularity()))
-                    return 1;
-                else
-                    return 0;
-            }
-        });
     }
 }

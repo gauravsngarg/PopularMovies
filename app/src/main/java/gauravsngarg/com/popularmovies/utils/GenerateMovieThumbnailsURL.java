@@ -10,7 +10,7 @@ public class GenerateMovieThumbnailsURL {
 
     private final static String BASE_MOVIE_THUMBNAIL_URL = "https://image.tmdb.org/t/p/";
 
-    private final static String imageQuality = "w185";
+    private final static String imageQuality = "w342";
 
     public static URL buildURL(String imageLink) {
 

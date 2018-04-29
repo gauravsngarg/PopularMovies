@@ -23,33 +23,32 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoviesViewHo
     private static List<MovieItem> list;
     private static int count;
 
+    private Context mContext;
+
     private final MovieListitemClickListner mOnClickListner;
 
     public MovieAdapter(int movieCount, List<MovieItem> listitem, MovieListitemClickListner listener) {
         mMovieItemsCount = movieCount;
         list = listitem;
         mOnClickListner = listener;
-        count = 0;
-
     }
 
     @Override
     public MoviesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context mContext = parent.getContext();
+        mContext = parent.getContext();
         LayoutInflater inflator = LayoutInflater.from(mContext);
 
         View view = inflator.inflate(R.layout.list_item, parent, false);
         MoviesViewHolder viewHolder = new MoviesViewHolder(view);
 
-        URL url = GenerateMovieThumbnailsURL.buildURL(list.get(count).getMoviePosterPath());
-        Picasso.with(mContext).load(url.toString()).into(viewHolder.mMovieItem);
-
-        count++;
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(MoviesViewHolder holder, int position) {
+
+        URL url = GenerateMovieThumbnailsURL.buildURL(list.get(position).getMoviePosterPath());
+        Picasso.with(mContext).load(url.toString()).into(holder.mMovieItem);
     }
 
     public interface MovieListitemClickListner{
@@ -74,7 +73,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MoviesViewHo
 
         @Override
         public void onClick(View v) {
-
 
             int clickedPosition = getAdapterPosition();
             mOnClickListner.onMovieListItemClick(clickedPosition);

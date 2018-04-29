@@ -12,6 +12,6 @@
     <string name="overview">Overview :</string>
     <string name="user_rating">User Rating:</string>
     <string name="release_date">Release Date:</string>
-    <string name="sort_by_most_popular">Sort By Most Popular</string>
-    <string name="sort_by_high_rated">Sort By High Rated</string>
+    <string name="sort_by_most_popular">Show Most Popular</string>
+    <string name="sort_by_high_rated">Show High Rated</string>
 </resources>
