@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         MovieItem itemClicked = list.get(clickedItemIndex);
 
         Intent i = new Intent(this, MoviePage.class);
+        i.putExtra("id", itemClicked.getMovieId());
         i.putExtra("title", itemClicked.getMovieTitle());
         i.putExtra("overview", itemClicked.getMoviePlotSynopsis());
         i.putExtra("rating", itemClicked.getMovieUserRating());
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
                         JSONObject js = jsonArray.getJSONObject(i);
                         MovieItem item = new MovieItem();
+                        item.setMovieId(js.getString("id"));
                         item.setMovieTitle(js.getString("original_title"));
                         item.setMoviePopularity(js.getString("popularity"));
                         item.setMoviePosterPath(js.getString("poster_path"));

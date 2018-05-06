@@ -4,8 +4,9 @@ import android.support.annotation.NonNull;
 
 
 @SuppressWarnings("ALL")
-public class MovieItem implements Comparable<MovieItem>{
+public class MovieItem implements Comparable<MovieItem> {
 
+    private String MovieId;
     private String movieTitle;
     private String moviePosterPath;
     private String moviePlotSynopsis;
@@ -13,8 +14,16 @@ public class MovieItem implements Comparable<MovieItem>{
     private String movieReleaseDate;
     private String moviePopularity;
 
-    public MovieItem(){
+    public MovieItem() {
 
+    }
+
+    public String getMovieId() {
+        return MovieId;
+    }
+
+    public void setMovieId(String movieId) {
+        MovieId = movieId;
     }
 
     public String getMovieTitle() {
@@ -67,7 +76,7 @@ public class MovieItem implements Comparable<MovieItem>{
 
     @Override
     public int compareTo(@NonNull MovieItem o) {
-        if(Float.parseFloat(moviePopularity) > Float.parseFloat(o.moviePopularity))
+        if (Float.parseFloat(moviePopularity) > Float.parseFloat(o.moviePopularity))
             return -1;
         else if (Float.parseFloat(moviePopularity) < Float.parseFloat(o.moviePopularity))
             return 1;

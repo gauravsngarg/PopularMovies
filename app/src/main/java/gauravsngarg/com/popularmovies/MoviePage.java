@@ -20,6 +20,8 @@ public class MoviePage extends AppCompatActivity {
 
     private ImageView iv_movieposter;
 
+    private String movieId;
+
 
 
     @Override
@@ -29,7 +31,6 @@ public class MoviePage extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
 
-
         tv_title = (TextView) findViewById(R.id.tv_title);
         tv_overview = (TextView) findViewById(R.id.movieoverview);
         tv_user_rating = (TextView) findViewById(R.id.user_rating);
@@ -37,6 +38,7 @@ public class MoviePage extends AppCompatActivity {
 
         iv_movieposter = (ImageView) findViewById(R.id.iv_movieposter);
 
+        movieId = extras.getString((getString(R.string.movie_id)));
         tv_title.setText(extras.getString(getString(R.string.tv_title)));
         tv_overview.setText(extras.getString(getString(R.string.tv_overview)));
         tv_user_rating.setText(extras.getString(getString(R.string.tv_user_rating)));
