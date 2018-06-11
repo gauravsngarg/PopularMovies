@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gauravsngarg.com.popularmovies.adapter.MovieAdapter;
+import gauravsngarg.com.popularmovies.data.FavContract;
 import gauravsngarg.com.popularmovies.data.FavListContract;
 import gauravsngarg.com.popularmovies.data.FavListDbHelper;
 import gauravsngarg.com.popularmovies.model.MovieItem;
@@ -197,13 +198,19 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         @Override
         protected String doInBackground(Void... params) {
 
-            Cursor cursor = mDb.query(FavListContract.FavListEntry.TABLE_NAME,
-                    null,
-                    null,
+            Cursor cursor = getContentResolver().query(FavContract.FavEntry.CONTENT_URI,
                     null,
                     null,
                     null,
                     null);
+
+            /*Cursor cursor = mDb.query(FavListContract.FavListEntry.TABLE_NAME,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);*/
             Log.d("Gaurav31", "Pass 1");
 
             int i = 0;

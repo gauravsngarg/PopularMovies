@@ -2,7 +2,6 @@ package gauravsngarg.com.popularmovies;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,7 +32,7 @@ import java.util.List;
 
 import gauravsngarg.com.popularmovies.adapter.ReviewsListAdapter;
 import gauravsngarg.com.popularmovies.adapter.TrailerListAdapter;
-import gauravsngarg.com.popularmovies.data.FavListContract;
+import gauravsngarg.com.popularmovies.data.FavContract;
 import gauravsngarg.com.popularmovies.data.FavListDbHelper;
 import gauravsngarg.com.popularmovies.model.MovieReviews;
 import gauravsngarg.com.popularmovies.model.MovieTrailer;
@@ -112,16 +111,28 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
             public void onClick(View v) {
                 mDb = dbHelper.getWritableDatabase();
                 ContentValues cv = new ContentValues();
-                cv.put(FavListContract.FavListEntry.COLUMN_MOVIE_ID, movieId);
-                cv.put(FavListContract.FavListEntry.COULUMN_MOVIE_TITLE, tv_title.getText().toString());
-                cv.put(FavListContract.FavListEntry.COLUMN_MOVIE_PLOT_SYNOPSIS, tv_overview.getText().toString());
-                cv.put(FavListContract.FavListEntry.COLUMN_MOVIE_RELEASE_DATE, tv_release_date.getText().toString());
-                cv.put(FavListContract.FavListEntry.COLUMN_MOVIE_USER_RATING, tv_user_rating.getText().toString());
-                cv.put(FavListContract.FavListEntry.COLUMN_MOVIE_POSTER_PATH, smal_poster_path.toString());
+                cv.put(FavContract.FavEntry.COLUMN_MOVIE_ID, movieId);
+                cv.put(FavContract.FavEntry.COULUMN_MOVIE_TITLE, tv_title.getText().toString());
+                cv.put(FavContract.FavEntry.COLUMN_MOVIE_PLOT_SYNOPSIS, tv_overview.getText().toString());
+                cv.put(FavContract.FavEntry.COLUMN_MOVIE_RELEASE_DATE, tv_release_date.getText().toString());
+                cv.put(FavContract.FavEntry.COLUMN_MOVIE_USER_RATING, tv_user_rating.getText().toString());
+                cv.put(FavContract.FavEntry.COLUMN_MOVIE_POSTER_PATH, smal_poster_path.toString());
 
-                mDb.insert(FavListContract.FavListEntry.TABLE_NAME, null, cv);
 
-                Cursor cursor = mDb.query(FavListContract.FavListEntry.TABLE_NAME,
+                Uri uri = getContentResolver().insert(FavContract.FavEntry.CONTENT_URI, cv);
+
+                if(uri!=null)
+                    Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_LONG).show();
+
+                //mDb.insert(FavContract.FavEntry.TABLE_NAME, null, cv);
+
+                // Build appropriate uri with String row id appended
+                /*String stringId = Integer.toString(id);
+                Uri uri = TaskContract.TaskEntry.CONTENT_URI;
+                uri = uri.buildUpon().appendPath(stringId).build();
+
+
+                Cursor cursor = mDb.query(FavContract.FavEntry.TABLE_NAME,
                         null,
                         null,
                         null,
@@ -131,8 +142,8 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
 
                 if (!cursor.moveToPosition(0))
                     return;
-                String mMovieTitle = cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COULUMN_MOVIE_TITLE));
-                Toast.makeText(MoviePage.this, mMovieTitle, Toast.LENGTH_SHORT).show();
+                String mMovieTitle = cursor.getString(cursor.getColumnIndex(FavContract.FavEntry.COULUMN_MOVIE_TITLE));
+                Toast.makeText(MoviePage.this, mMovieTitle, Toast.LENGTH_SHORT).show();*/
 
             }
         });

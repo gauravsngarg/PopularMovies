@@ -20,6 +20,12 @@
         <activity
             android:parentActivityName=".MainActivity"
             android:name=".MoviePage"/>
+
+        <provider
+            android:name="gauravsngarg.com.popularmovies.data.FavContentProvider"
+            android:authorities="gauravsngarg.com.popularmovies"
+            android:exported="false"/>
     </application>
+
 
 </manifest>
