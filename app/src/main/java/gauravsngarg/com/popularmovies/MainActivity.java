@@ -1,11 +1,14 @@
 package gauravsngarg.com.popularmovies;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gauravsngarg.com.popularmovies.adapter.MovieAdapter;
+import gauravsngarg.com.popularmovies.data.FavListContract;
+import gauravsngarg.com.popularmovies.data.FavListDbHelper;
 import gauravsngarg.com.popularmovies.model.MovieItem;
 import gauravsngarg.com.popularmovies.utils.NetworkUtils;
 import gauravsngarg.com.popularmovies.utils.NetworkUtilsTopRated;
@@ -36,14 +41,21 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private boolean MENU_MOST_POPULAR_VALUE = false;
     private boolean MENU_HIGH_RATED_VALUE = true;
+    private boolean MENU_SHOW_FAV = false;
 
     private String MENU_MOST_POPULAR_KEY;
     private String MENU_HIGH_RATED_KEY;
+
+    SQLiteDatabase mDb;
+    FavListDbHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dbHelper = new FavListDbHelper(this);
+        mDb = dbHelper.getReadableDatabase();
 
         MENU_MOST_POPULAR_KEY = getResources().getString(R.string.menu_most_popular_key);
         MENU_HIGH_RATED_KEY = getString(R.string.menu_high_rated_key);
@@ -65,10 +77,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             new ShowMovieListTask().execute(makeSearchQuery(1, 1));
         else if (!MENU_HIGH_RATED_VALUE)
             new ShowMovieListTask().execute(makeSearchQuery(1, 2));
-
-        // new ShowMovieListTask().execute(makeSearchQuery(1));
-        // new ShowMovieListTask().execute(makeSearchQuery(2));
-        // new ShowMovieListTask().execute(makeSearchQuery(3));
 
 
     }
@@ -97,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         i.putExtra("rating", itemClicked.getMovieUserRating());
         i.putExtra("release_date", itemClicked.getMovieReleaseDate());
         i.putExtra("url", itemClicked.getMoviePosterPath());
+
+        Log.d("Gaurav31","Movie ID: " + itemClicked.getMovieId());
 
         startActivity(i);
     }
@@ -175,6 +185,65 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
     }
 
+    public class ShowFavMovieListTask extends  AsyncTask<Void, Void, String>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            list.clear();
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            Cursor cursor = mDb.query(FavListContract.FavListEntry.TABLE_NAME,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
+            Log.d("Gaurav31", "Pass 1");
+
+            int i = 0;
+            cursor.moveToPosition(0);
+            for(i = 0 ; cursor.moveToPosition(i); i++) {
+                MovieItem item = new MovieItem();
+                item.setMovieId(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COLUMN_MOVIE_ID)));
+                item.setMovieTitle(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COULUMN_MOVIE_TITLE)));
+                item.setMoviePlotSynopsis(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COLUMN_MOVIE_PLOT_SYNOPSIS)));
+                item.setMovieReleaseDate(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COLUMN_MOVIE_RELEASE_DATE)));
+                item.setMovieUserRating(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COLUMN_MOVIE_USER_RATING)));
+                item.setMoviePosterPath(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COLUMN_MOVIE_POSTER_PATH)));
+
+
+                String mMovieTitle = cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COLUMN_MOVIE_POSTER_PATH));
+                String mID = cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COULUMN_MOVIE_TITLE));
+                String mID1 = cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COLUMN_MOVIE_ID));
+                Log.d("Gaurav31", mMovieTitle + " " + mID + " " + mID1);
+                list.add(item);
+
+            }
+
+
+
+            Log.d("Gaurav31", "Pass 2");
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            adapter = new MovieAdapter(list.size(), list, MainActivity.this);
+            mMoviesList.setAdapter(adapter);
+
+
+            mProgressBar.setVisibility(View.INVISIBLE);
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(MENU_HIGH_RATED_KEY, MENU_HIGH_RATED_VALUE + "");
@@ -212,6 +281,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             MENU_HIGH_RATED_VALUE = true;
             MENU_MOST_POPULAR_VALUE = false;
             return true;
+        } if(item.getItemId() == R.id.action_sortby_fav){
+            MENU_HIGH_RATED_VALUE = true;
+            MENU_MOST_POPULAR_VALUE = true;
+            new ShowFavMovieListTask().execute();
+
+
         }
 
 
