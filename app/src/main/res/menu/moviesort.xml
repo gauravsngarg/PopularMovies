@@ -17,4 +17,10 @@
         android:title="@string/sort_by_high_rated"
         android:visible="true"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_sortby_fav"
+        android:orderInCategory="3"
+        android:title="@string/show_favorites"
+        android:visible="true"
+        app:showAsAction="never"/>
 </menu>

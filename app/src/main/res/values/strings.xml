@@ -15,4 +15,6 @@
     <string name="release_date">Release Date:</string>
     <string name="sort_by_most_popular">Show Most Popular</string>
     <string name="sort_by_high_rated">Show High Rated</string>
+    <string name="show_favorites">Show Favorites</string>
+    <string name="review_author_name">Author</string>
 </resources>
