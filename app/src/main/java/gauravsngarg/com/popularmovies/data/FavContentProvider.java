@@ -26,25 +26,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-//import static com.example.android.todolist.data.TaskContract.TaskEntry.TABLE_NAME;
-
-// Verify that TaskContentProvider extends from ContentProvider and implements required methods
 public class FavContentProvider extends ContentProvider {
 
-    // Define final integer constants for the directory of tasks and a single item.
-    // It's convention to use 100, 200, 300, etc for directories,
-    // and related ints (101, 102, ..) for items in that directory.
+
     public static final int TASKS = 100;
     public static final int TASK_WITH_ID = 101;
 
     // CDeclare a static variable for the Uri matcher that you construct
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
-    // Define a static buildUriMatcher method that associates URI's with their int match
-    /**
-     Initialize a new matcher object without any matches,
-     then use .addURI(String authority, String path, int match) to add matches
-     */
     public static UriMatcher buildUriMatcher() {
 
         // Initialize a UriMatcher with no matches by passing in NO_MATCH to the constructor

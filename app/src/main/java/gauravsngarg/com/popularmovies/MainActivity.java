@@ -42,10 +42,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private boolean MENU_MOST_POPULAR_VALUE = false;
     private boolean MENU_HIGH_RATED_VALUE = true;
-    private boolean MENU_SHOW_FAV = false;
+    private boolean MENU_SHOW_FAV_VALUE = true;
 
     private String MENU_MOST_POPULAR_KEY;
     private String MENU_HIGH_RATED_KEY;
+    private String MENU_SHOW_FAV_KEY;
 
     SQLiteDatabase mDb;
     FavListDbHelper dbHelper;
@@ -60,10 +61,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         MENU_MOST_POPULAR_KEY = getResources().getString(R.string.menu_most_popular_key);
         MENU_HIGH_RATED_KEY = getString(R.string.menu_high_rated_key);
+        MENU_SHOW_FAV_KEY = getString(R.string.menu_show_fav_key);
 
         if (savedInstanceState != null) {
             MENU_MOST_POPULAR_VALUE = Boolean.parseBoolean(savedInstanceState.getString(MENU_MOST_POPULAR_KEY));
             MENU_HIGH_RATED_VALUE = Boolean.parseBoolean(savedInstanceState.getString(MENU_HIGH_RATED_KEY));
+            MENU_SHOW_FAV_VALUE = Boolean.parseBoolean(savedInstanceState.getString(MENU_SHOW_FAV_KEY));
         }
 
         mMoviesList = (RecyclerView) findViewById(R.id.rv_movies);
@@ -74,7 +77,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mMoviesList.setHasFixedSize(true);
         list = new ArrayList<MovieItem>();
 
-        if (!MENU_MOST_POPULAR_VALUE)
+
+        if(!MENU_SHOW_FAV_VALUE){
+            MENU_HIGH_RATED_VALUE = true;
+            MENU_MOST_POPULAR_VALUE = true;
+            new ShowFavMovieListTask().execute();
+        }else if (!MENU_MOST_POPULAR_VALUE)
             new ShowMovieListTask().execute(makeSearchQuery(1, 1));
         else if (!MENU_HIGH_RATED_VALUE)
             new ShowMovieListTask().execute(makeSearchQuery(1, 2));
@@ -180,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                     mMoviesList.setAdapter(adapter);
                 }
 
+                MENU_SHOW_FAV_VALUE = true;
                 mProgressBar.setVisibility(View.INVISIBLE);
 
             }
@@ -247,6 +256,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             mMoviesList.setAdapter(adapter);
 
 
+           MENU_SHOW_FAV_VALUE = false;
             mProgressBar.setVisibility(View.INVISIBLE);
         }
     }
@@ -255,6 +265,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(MENU_HIGH_RATED_KEY, MENU_HIGH_RATED_VALUE + "");
         outState.putString(MENU_MOST_POPULAR_KEY, MENU_MOST_POPULAR_VALUE + "");
+        outState.putString(MENU_SHOW_FAV_KEY, MENU_SHOW_FAV_VALUE +"");
         super.onSaveInstanceState(outState);
     }
 
@@ -270,6 +281,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.getItem(0).setVisible(MENU_MOST_POPULAR_VALUE);
         menu.getItem(1).setVisible(MENU_HIGH_RATED_VALUE);
+        menu.getItem(2).setVisible(MENU_SHOW_FAV_VALUE);
         return super.onPrepareOptionsMenu(menu);
     }
 
