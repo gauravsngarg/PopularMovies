@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         i.putExtra("rating", itemClicked.getMovieUserRating());
         i.putExtra("release_date", itemClicked.getMovieReleaseDate());
         i.putExtra("url", itemClicked.getMoviePosterPath());
+        i.putExtra("favflag",!MENU_SHOW_FAV_VALUE);
 
         Log.d("Gaurav31","Movie ID: " + itemClicked.getMovieId());
 
@@ -213,14 +214,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                     null,
                     null);
 
-            /*Cursor cursor = mDb.query(FavListContract.FavListEntry.TABLE_NAME,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null);*/
-            Log.d("Gaurav31", "Pass 1");
 
             int i = 0;
             cursor.moveToPosition(0);
@@ -229,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 item.setMovieId(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COLUMN_MOVIE_ID)));
                 item.setMovieTitle(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COULUMN_MOVIE_TITLE)));
                 item.setMoviePlotSynopsis(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COLUMN_MOVIE_PLOT_SYNOPSIS)));
-                item.setMovieReleaseDate(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COLUMN_MOVIE_RELEASE_DATE)));
+                item.setMovieReleaseDate(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COLUMN_MOVIE_RELEASE_YEAR)));
                 item.setMovieUserRating(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COLUMN_MOVIE_USER_RATING)));
                 item.setMoviePosterPath(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COLUMN_MOVIE_POSTER_PATH)));
 
@@ -241,10 +234,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 list.add(item);
 
             }
-
-
-
-            Log.d("Gaurav31", "Pass 2");
 
             return null;
         }
