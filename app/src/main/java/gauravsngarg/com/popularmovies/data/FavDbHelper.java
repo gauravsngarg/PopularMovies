@@ -10,8 +10,6 @@ public class FavDbHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "movielist.db";
     private static final int DATABASE_VERSION = 1;
 
-    Context mContext;
-
     public FavDbHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -26,7 +24,7 @@ public class FavDbHelper extends SQLiteOpenHelper {
                 FavContract.FavEntry.COLUMN_MOVIE_ID + " TEXT, " +
                 FavContract.FavEntry.COULUMN_MOVIE_TITLE + " TEXT, " +
                 FavContract.FavEntry.COLUMN_MOVIE_PLOT_SYNOPSIS + " TEXT, " +
-                FavContract.FavEntry.COLUMN_MOVIE_RELEASE_DATE + " DATE, " +
+                FavContract.FavEntry.COLUMN_MOVIE_RELEASE_YEAR + " INTEGER, " +
                 FavContract.FavEntry.COLUMN_MOVIE_USER_RATING + " INTEGER, " +
                 FavContract.FavEntry.COLUMN_MOVIE_POSTER_PATH + " TEXT, " +
                 " UNIQUE (" + FavListContract.FavListEntry.COULUMN_MOVIE_TITLE + ") ON CONFLICT REPLACE" +

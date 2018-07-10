@@ -12,9 +12,7 @@ public class FavListContract {
         public static final String COLUMN_MOVIE_POSTER_PATH = "poster_path";
         public static final String COLUMN_MOVIE_PLOT_SYNOPSIS = "overview";
         public static final String COLUMN_MOVIE_USER_RATING = "rating";
-        public static final String COLUMN_MOVIE_RELEASE_DATE = "release_date";
-        public static final String COLUMN_MOVIE_POPULARITY = "popularity";
-       // public static final String COLUMN_MOVIE_TRAILER = "trailer";
+        public static final String COLUMN_MOVIE_RELEASE_YEAR = "release_year";
 
     }
 }
