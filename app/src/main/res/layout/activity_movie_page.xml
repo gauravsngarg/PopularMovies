@@ -14,9 +14,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="200dp"
             android:layout_gravity="center"
-            android:layout_weight="0.30"
             android:orientation="horizontal">
 
             <FrameLayout
@@ -27,7 +26,7 @@
                 <ImageView
                     android:id="@+id/iv_movieposter"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
             </FrameLayout>
 
             <LinearLayout
@@ -37,22 +36,22 @@
                 android:padding="8dp">
 
                 <TextView
+                    android:id="@+id/tv_releaseyear"
                     style="@style/TextAppearance.AppCompat.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:paddingTop="8dp"
-                    android:text="@string/movie_title"
-                    android:textSize="20sp" />
-
+                    android:textSize="24sp"
+                    android:visibility="visible"/>
 
                 <TextView
-                    android:id="@+id/tv_title"
+                    android:id="@+id/user_rating"
                     style="@style/TextAppearance.AppCompat.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:textSize="20sp" />
+                    android:textSize="16sp"/>
+
                 <Button
                     android:id="@+id/btn_mark_fav"
                     android:layout_width="wrap_content"
@@ -61,10 +60,16 @@
             </LinearLayout>
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="0dp"
+            android:background="#000000"/>
+
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="0.7"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <LinearLayout
@@ -79,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
                     android:text="@string/overview"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
                 <TextView
                     android:id="@+id/movieoverview"
@@ -87,55 +92,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal">
+            <View
+                android:id="@+id/overview_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="0dp"
+                android:background="#000000"
+                android:visibility="gone"/>
 
-                <TextView
-                    style="@style/TextAppearance.AppCompat.Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    android:text="@string/user_rating"
-                    android:textSize="16sp" />
 
-                <TextView
-                    android:id="@+id/user_rating"
-                    style="@style/TextAppearance.AppCompat.Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/TextAppearance.AppCompat.Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    android:text="@string/release_date"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/release_date"
-                    style="@style/TextAppearance.AppCompat.Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    android:textSize="16sp" />
-            </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -144,20 +114,44 @@
                 <include
                     layout="@layout/trailerlist"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent"/>
             </LinearLayout>
+
+            <View
+                android:id="@+id/trailerlist_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="0dp"
+                android:background="#000000"
+                android:visibility="gone"/>
+
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="300dp"
                 >
 
                 <include
                     layout="@layout/review_list"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
         </LinearLayout>
 
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            >
+
+            <ProgressBar
+                android:id="@+id/pb_loading_indicator"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="center"
+                android:visibility="invisible"/>
+        </FrameLayout>
     </LinearLayout>
+
 </ScrollView>

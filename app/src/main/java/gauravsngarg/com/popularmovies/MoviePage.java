@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -48,7 +47,7 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
     private static final int MOVIE_DOWNLOAD_LOADER_ID = 22;
     private static final int REVIEWS_DOWNLOAD_LOADER_ID = 24;
 
-    private TextView tv_title;
+    private TextView tv_releaseyear;
     private TextView tv_overview;
     private TextView tv_user_rating;
     private TextView tv_release_date;
@@ -71,13 +70,15 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
     private RecyclerView review_recycler_view;
     private List<MovieReviews> listOfReviews;
     private ReviewsListAdapter reviewAdapter;
-
-    private TextView review_author_name;
-    //private TextView review;
+    private View divider_trailer_list;
+    private View divider_overview;
+    private boolean favFLag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_movie_page);
 
         dbHelper = new FavListDbHelper(this);
@@ -88,23 +89,33 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
         listOftrailers = new ArrayList<>();
         listOfReviews = new ArrayList<>();
 
-        tv_title = (TextView) findViewById(R.id.tv_title);
+        tv_releaseyear = (TextView) findViewById(R.id.tv_releaseyear);
         tv_overview = (TextView) findViewById(R.id.movieoverview);
         tv_user_rating = (TextView) findViewById(R.id.user_rating);
-        tv_release_date = (TextView) findViewById(R.id.release_date);
         btn_mark_fav = (Button) findViewById(R.id.btn_mark_fav);
 
         iv_movieposter = (ImageView) findViewById(R.id.iv_movieposter);
-        //progressBar = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+        progressBar = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        divider_trailer_list = (View) findViewById(R.id.trailerlist_divider);
+        divider_overview = (View) findViewById(R.id.overview_divider);
 
         review_recycler_view = (RecyclerView) findViewById(R.id.review_recycler_view);
 
         movieId = extras.getString((getString(R.string.movie_id)));
-        tv_title.setText(extras.getString(getString(R.string.tv_title)));
         tv_overview.setText(extras.getString(getString(R.string.tv_overview)));
-        tv_user_rating.setText(extras.getString(getString(R.string.tv_user_rating)));
-        tv_release_date.setText(extras.getString(getString(R.string.tv_release_date)));
+        tv_user_rating.setText(extras.getString(getString(R.string.tv_user_rating)) + "/10");
+
+        favFLag = extras.getBoolean((getString(R.string.favflag)));
+        if(favFLag){
+            btn_mark_fav.setVisibility(View.INVISIBLE);
+        }
+
+       String[] result = (extras.getString(getString(R.string.tv_release_date))).split("-");
+       tv_releaseyear.setText(result[0]);
+
+       final String movie_title = extras.getString(getString(R.string.tv_title));
+        getSupportActionBar().setTitle(movie_title);
 
         btn_mark_fav.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,47 +123,17 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
                 mDb = dbHelper.getWritableDatabase();
                 ContentValues cv = new ContentValues();
                 cv.put(FavContract.FavEntry.COLUMN_MOVIE_ID, movieId);
-                cv.put(FavContract.FavEntry.COULUMN_MOVIE_TITLE, tv_title.getText().toString());
+                cv.put(FavContract.FavEntry.COULUMN_MOVIE_TITLE, movie_title);
                 cv.put(FavContract.FavEntry.COLUMN_MOVIE_PLOT_SYNOPSIS, tv_overview.getText().toString());
-                cv.put(FavContract.FavEntry.COLUMN_MOVIE_RELEASE_DATE, tv_release_date.getText().toString());
+                cv.put(FavContract.FavEntry.COLUMN_MOVIE_RELEASE_YEAR, tv_releaseyear.getText().toString());
                 cv.put(FavContract.FavEntry.COLUMN_MOVIE_USER_RATING, tv_user_rating.getText().toString());
                 cv.put(FavContract.FavEntry.COLUMN_MOVIE_POSTER_PATH, smal_poster_path.toString());
 
 
                 Uri uri = getContentResolver().insert(FavContract.FavEntry.CONTENT_URI, cv);
 
-                if(uri!=null)
-                    Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_LONG).show();
-
-                //mDb.insert(FavContract.FavEntry.TABLE_NAME, null, cv);
-
-                // Build appropriate uri with String row id appended
-                /*String stringId = Integer.toString(id);
-                Uri uri = TaskContract.TaskEntry.CONTENT_URI;
-                uri = uri.buildUpon().appendPath(stringId).build();
-
-
-                Cursor cursor = mDb.query(FavContract.FavEntry.TABLE_NAME,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null);
-
-                if (!cursor.moveToPosition(0))
-                    return;
-                String mMovieTitle = cursor.getString(cursor.getColumnIndex(FavContract.FavEntry.COULUMN_MOVIE_TITLE));
-                Toast.makeText(MoviePage.this, mMovieTitle, Toast.LENGTH_SHORT).show();*/
-
             }
         });
-
-//        ScrollView scrollView = (ScrollView) findViewById(R.id.scroll);
-//
-//        scrollView.getScaleX();
-//        scrollView.getScaleY();
-
 
         smal_poster_path = extras.getString(getString(R.string.movie_url));
 
@@ -168,24 +149,28 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
         Bundle queryReviewsBundle = new Bundle();
         queryReviewsBundle.putString(GET_Video_URL_EXTRA, reviewsURL.toString());
 
+
         LoaderManager loaderManager = getSupportLoaderManager();
-        //Loader<String> getMovieLoader = loaderManager.getLoader(MOVIE_DOWNLOAD_LOADER_ID);
         loaderManager.initLoader(MOVIE_DOWNLOAD_LOADER_ID, queryVideosBundle, this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
-        // Loader<String> getReviewsLoader = loaderManager.getLoader(REVIEWS_DOWNLOAD_LOADER_ID);
         loaderManager.initLoader(REVIEWS_DOWNLOAD_LOADER_ID, queryReviewsBundle, this);
         LinearLayoutManager layoutManager_rev = new LinearLayoutManager((this));
         review_recycler_view.setLayoutManager(layoutManager_rev);
         review_recycler_view.setHasFixedSize(true);
+
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
 
     @Override
     public Loader<String> onCreateLoader(int id, final Bundle args) {
-        // progressBar.setVisibility(View.VISIBLE);
 
         if (id == MOVIE_DOWNLOAD_LOADER_ID) {
             return new AsyncTaskLoader<String>(this) {
@@ -197,7 +182,7 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
 
                     if (args == null)
                         return;
-                    //    progressBar.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.VISIBLE);
                     if (mJson != null)
                         deliverResult(mJson);
                     else
@@ -245,7 +230,7 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
 
                     if (args == null)
                         return;
-                    //    progressBar.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.VISIBLE);
                     if (mJson != null)
                         deliverResult(mJson);
                     else
@@ -293,6 +278,7 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
         if (data == null) {
 
         } else if (loader.getId() == MOVIE_DOWNLOAD_LOADER_ID) {
+            listOftrailers.clear();
             try {
                 JSONObject jsonObject = new JSONObject(data);
                 JSONArray jsonArray = jsonObject.getJSONArray("results");
@@ -313,14 +299,15 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
                 e.printStackTrace();
             }
 
-            //ToDo Add Recycler View and add data to adapter
             videosadapter = new TrailerListAdapter(listOftrailers.size(), listOftrailers, MoviePage.this);
             recyclerView.setAdapter(videosadapter);
+            if(listOftrailers.size()!= 0)
+            divider_overview.setVisibility(View.VISIBLE);
         } else if (loader.getId() == REVIEWS_DOWNLOAD_LOADER_ID) {
             try {
                 JSONObject jsonObject = new JSONObject(data);
                 JSONArray jsonArray = jsonObject.getJSONArray("results");
-                for (int i = 0; i < jsonArray.length(); i++) {
+                for (int i = 0; i < jsonArray.length()  && i < 4 ; i++) {
                     MovieReviews item = new MovieReviews();
                     JSONObject js = jsonArray.getJSONObject(i);
                     item.setAuthor(js.getString("author"));
@@ -336,9 +323,11 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
 
             reviewAdapter = new ReviewsListAdapter(listOfReviews.size(), listOfReviews);
             review_recycler_view.setAdapter(reviewAdapter);
+            divider_trailer_list.setVisibility(View.VISIBLE);
+
         }
 
-        //   progressBar.setVisibility(View.INVISIBLE);
+           progressBar.setVisibility(View.INVISIBLE);
     }
 
 
