@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,15 +79,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         list = new ArrayList<MovieItem>();
 
 
-        if(!MENU_SHOW_FAV_VALUE){
+        if (!MENU_SHOW_FAV_VALUE) {
             MENU_HIGH_RATED_VALUE = true;
             MENU_MOST_POPULAR_VALUE = true;
+            MENU_SHOW_FAV_VALUE = false;
             new ShowFavMovieListTask().execute();
-        }else if (!MENU_MOST_POPULAR_VALUE)
+        } else if (!MENU_MOST_POPULAR_VALUE)
             new ShowMovieListTask().execute(makeSearchQuery(1, 1));
         else if (!MENU_HIGH_RATED_VALUE)
             new ShowMovieListTask().execute(makeSearchQuery(1, 2));
-
 
     }
 
@@ -114,9 +115,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         i.putExtra("rating", itemClicked.getMovieUserRating());
         i.putExtra("release_date", itemClicked.getMovieReleaseDate());
         i.putExtra("url", itemClicked.getMoviePosterPath());
-        i.putExtra("favflag",!MENU_SHOW_FAV_VALUE);
+        i.putExtra("favflag", !MENU_SHOW_FAV_VALUE);
 
-        Log.d("Gaurav31","Movie ID: " + itemClicked.getMovieId());
+        Log.d("Gaurav31", "Movie ID: " + itemClicked.getMovieId());
 
         startActivity(i);
     }
@@ -192,11 +193,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 MENU_SHOW_FAV_VALUE = true;
                 mProgressBar.setVisibility(View.INVISIBLE);
 
+            } else {
+                mProgressBar.setVisibility(View.INVISIBLE);
+                Toast.makeText(getApplicationContext(), "JSON file is empty", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    public class ShowFavMovieListTask extends  AsyncTask<Void, Void, String>{
+    public class ShowFavMovieListTask extends AsyncTask<Void, Void, String> {
 
         @Override
         protected void onPreExecute() {
@@ -217,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
             int i = 0;
             cursor.moveToPosition(0);
-            for(i = 0 ; cursor.moveToPosition(i); i++) {
+            for (i = 0; cursor.moveToPosition(i); i++) {
                 MovieItem item = new MovieItem();
                 item.setMovieId(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COLUMN_MOVIE_ID)));
                 item.setMovieTitle(cursor.getString(cursor.getColumnIndex(FavListContract.FavListEntry.COULUMN_MOVIE_TITLE)));
@@ -245,16 +249,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             mMoviesList.setAdapter(adapter);
 
 
-           MENU_SHOW_FAV_VALUE = false;
+            MENU_SHOW_FAV_VALUE = false;
             mProgressBar.setVisibility(View.INVISIBLE);
         }
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(MENU_HIGH_RATED_KEY, MENU_HIGH_RATED_VALUE + "");
         outState.putString(MENU_MOST_POPULAR_KEY, MENU_MOST_POPULAR_VALUE + "");
-        outState.putString(MENU_SHOW_FAV_KEY, MENU_SHOW_FAV_VALUE +"");
+        outState.putString(MENU_SHOW_FAV_KEY, MENU_SHOW_FAV_VALUE + "");
         super.onSaveInstanceState(outState);
     }
 
@@ -289,7 +294,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             MENU_HIGH_RATED_VALUE = true;
             MENU_MOST_POPULAR_VALUE = false;
             return true;
-        } if(item.getItemId() == R.id.action_sortby_fav){
+        }
+        if (item.getItemId() == R.id.action_sortby_fav) {
             MENU_HIGH_RATED_VALUE = true;
             MENU_MOST_POPULAR_VALUE = true;
             new ShowFavMovieListTask().execute();
