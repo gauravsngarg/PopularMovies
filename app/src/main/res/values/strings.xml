@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">PopularMovies</string>
-    <string name="api_key">Your API_KEY</string>
     <string name="menu_most_popular_key">mostpopular</string>
     <string name="menu_high_rated_key">highrated</string>
     <string name="movie_id">id</string>

@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private String MENU_HIGH_RATED_KEY;
     private String MENU_SHOW_FAV_KEY;
 
+    private static final String API_KEY = BuildConfig.API_KEY;
+
     SQLiteDatabase mDb;
     FavListDbHelper dbHelper;
 
@@ -101,9 +103,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         URL url = null;
         if (order == 1)
-            url = NetworkUtils.buildUrl(getString(R.string.api_key), page);
+            url = NetworkUtils.buildUrl(API_KEY, page);
         else if (order == 2)
-            url = NetworkUtilsTopRated.buildUrl(getString(R.string.api_key), page);
+            url = NetworkUtilsTopRated.buildUrl(API_KEY, page);
 
         return url;
     }
