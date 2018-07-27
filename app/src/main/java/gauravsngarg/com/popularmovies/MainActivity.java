@@ -78,6 +78,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mMoviesList.setHasFixedSize(true);
         list = new ArrayList<MovieItem>();
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         if (!MENU_SHOW_FAV_VALUE) {
             MENU_HIGH_RATED_VALUE = true;
@@ -115,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         i.putExtra("rating", itemClicked.getMovieUserRating());
         i.putExtra("release_date", itemClicked.getMovieReleaseDate());
         i.putExtra("url", itemClicked.getMoviePosterPath());
-        i.putExtra("favflag", !MENU_SHOW_FAV_VALUE);
+       // i.putExtra("favflag", !MENU_SHOW_FAV_VALUE);
 
         Log.d("Gaurav31", "Movie ID: " + itemClicked.getMovieId());
 

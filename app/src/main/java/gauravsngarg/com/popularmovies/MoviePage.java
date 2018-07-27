@@ -2,6 +2,7 @@ package gauravsngarg.com.popularmovies;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,7 +51,6 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
     private TextView tv_releaseyear;
     private TextView tv_overview;
     private TextView tv_user_rating;
-    private TextView tv_release_date;
     private Button btn_mark_fav;
 
     private ImageView iv_movieposter;
@@ -72,17 +72,13 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
     private ReviewsListAdapter reviewAdapter;
     private View divider_trailer_list;
     private View divider_overview;
-    private boolean favFLag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.activity_movie_page);
 
         dbHelper = new FavListDbHelper(this);
-
 
         Bundle extras = getIntent().getExtras();
 
@@ -106,32 +102,49 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
         tv_overview.setText(extras.getString(getString(R.string.tv_overview)));
         tv_user_rating.setText(extras.getString(getString(R.string.tv_user_rating)) + "/10");
 
-        favFLag = extras.getBoolean((getString(R.string.favflag)));
-        if(favFLag){
-            btn_mark_fav.setVisibility(View.INVISIBLE);
+        String[] projection = {FavContract.FavEntry.COLUMN_MOVIE_ID};
+
+        String selection = FavContract.FavEntry.COLUMN_MOVIE_ID + " = \"" + movieId + "\"";
+        Cursor cursor = getApplicationContext().getContentResolver().query(
+                FavContract.FavEntry.CONTENT_URI,
+                projection, selection,
+                null, null);
+
+        if (cursor.getCount() > 0) {
+            btn_mark_fav.setText("MARKED AS FAVOURITE");
+            btn_mark_fav.setVisibility(View.VISIBLE);
+        } else {
+            btn_mark_fav.setText("MARK AS FAVOURITE");
+            btn_mark_fav.setVisibility(View.VISIBLE);
         }
 
-       String[] result = (extras.getString(getString(R.string.tv_release_date))).split("-");
-       tv_releaseyear.setText(result[0]);
+        String[] result = (extras.getString(getString(R.string.tv_release_date))).split("-");
+        tv_releaseyear.setText(result[0]);
 
-       final String movie_title = extras.getString(getString(R.string.tv_title));
+        final String movie_title = extras.getString(getString(R.string.tv_title));
         getSupportActionBar().setTitle(movie_title);
 
         btn_mark_fav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDb = dbHelper.getWritableDatabase();
-                ContentValues cv = new ContentValues();
-                cv.put(FavContract.FavEntry.COLUMN_MOVIE_ID, movieId);
-                cv.put(FavContract.FavEntry.COULUMN_MOVIE_TITLE, movie_title);
-                cv.put(FavContract.FavEntry.COLUMN_MOVIE_PLOT_SYNOPSIS, tv_overview.getText().toString());
-                cv.put(FavContract.FavEntry.COLUMN_MOVIE_RELEASE_YEAR, tv_releaseyear.getText().toString());
-                cv.put(FavContract.FavEntry.COLUMN_MOVIE_USER_RATING, tv_user_rating.getText().toString());
-                cv.put(FavContract.FavEntry.COLUMN_MOVIE_POSTER_PATH, smal_poster_path.toString());
+                if (btn_mark_fav.getText().equals("MARK AS FAVOURITE")) {
+                    mDb = dbHelper.getWritableDatabase();
+                    ContentValues cv = new ContentValues();
+                    cv.put(FavContract.FavEntry.COLUMN_MOVIE_ID, movieId);
+                    cv.put(FavContract.FavEntry.COULUMN_MOVIE_TITLE, movie_title);
+                    cv.put(FavContract.FavEntry.COLUMN_MOVIE_PLOT_SYNOPSIS, tv_overview.getText().toString());
+                    cv.put(FavContract.FavEntry.COLUMN_MOVIE_RELEASE_YEAR, tv_releaseyear.getText().toString());
+                    cv.put(FavContract.FavEntry.COLUMN_MOVIE_USER_RATING, tv_user_rating.getText().toString());
+                    cv.put(FavContract.FavEntry.COLUMN_MOVIE_POSTER_PATH, smal_poster_path.toString());
 
-
-                Uri uri = getContentResolver().insert(FavContract.FavEntry.CONTENT_URI, cv);
-
+                    Uri uri = getContentResolver().insert(FavContract.FavEntry.CONTENT_URI, cv);
+                    btn_mark_fav.setText("MARKED AS FAVOURITE");
+                } else if (btn_mark_fav.getText().equals("MARKED AS FAVOURITE")) {
+                    btn_mark_fav.setText("MARK AS FAVOURITE");
+                    mDb = dbHelper.getWritableDatabase();
+                    String selection = FavContract.FavEntry.COLUMN_MOVIE_ID + " = \"" + movieId + "\"";
+                    int rowsDel = getContentResolver().delete(FavContract.FavEntry.CONTENT_URI, selection, null);
+                }
             }
         });
 
@@ -161,11 +174,6 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
         review_recycler_view.setLayoutManager(layoutManager_rev);
         review_recycler_view.setHasFixedSize(true);
 
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
 
     }
 
@@ -182,7 +190,7 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
 
                     if (args == null)
                         return;
-                        progressBar.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.VISIBLE);
                     if (mJson != null)
                         deliverResult(mJson);
                     else
@@ -230,7 +238,7 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
 
                     if (args == null)
                         return;
-                        progressBar.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.VISIBLE);
                     if (mJson != null)
                         deliverResult(mJson);
                     else
@@ -301,13 +309,13 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
 
             videosadapter = new TrailerListAdapter(listOftrailers.size(), listOftrailers, MoviePage.this);
             recyclerView.setAdapter(videosadapter);
-            if(listOftrailers.size()!= 0)
-            divider_overview.setVisibility(View.VISIBLE);
+            if (listOftrailers.size() != 0)
+                divider_overview.setVisibility(View.VISIBLE);
         } else if (loader.getId() == REVIEWS_DOWNLOAD_LOADER_ID) {
             try {
                 JSONObject jsonObject = new JSONObject(data);
                 JSONArray jsonArray = jsonObject.getJSONArray("results");
-                for (int i = 0; i < jsonArray.length()  && i < 4 ; i++) {
+                for (int i = 0; i < jsonArray.length() && i < 4; i++) {
                     MovieReviews item = new MovieReviews();
                     JSONObject js = jsonArray.getJSONObject(i);
                     item.setAuthor(js.getString("author"));
@@ -327,7 +335,7 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
 
         }
 
-           progressBar.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
 

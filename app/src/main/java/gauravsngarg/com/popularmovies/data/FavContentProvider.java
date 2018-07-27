@@ -23,8 +23,10 @@ import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 public class FavContentProvider extends ContentProvider {
 
@@ -65,7 +67,7 @@ public class FavContentProvider extends ContentProvider {
             case TASKS:
 
                 long id = db.insert(FavContract.FavEntry.TABLE_NAME, null, values);
-                if ( id > 0 ) {
+                if (id > 0) {
                     returnUri = ContentUris.withAppendedId(FavContract.FavEntry.CONTENT_URI, id);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
@@ -92,7 +94,8 @@ public class FavContentProvider extends ContentProvider {
 
         switch (match) {
             case TASKS:
-                retCursor =  db.query(FavContract.FavEntry.TABLE_NAME,
+                Log.d("Gaurav31", "Tasks");
+                retCursor = db.query(FavContract.FavEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -100,6 +103,16 @@ public class FavContentProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
+            case TASK_WITH_ID:
+                Log.d("Gaurav31", "Tasks with Id");
+                SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+                queryBuilder.setTables(FavContract.FavEntry.TABLE_NAME);
+                queryBuilder.appendWhere(FavContract.FavEntry.COLUMN_MOVIE_ID + "=" +
+                        uri.getLastPathSegment());
+
+                retCursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+                break;
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -111,29 +124,28 @@ public class FavContentProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        throw new UnsupportedOperationException("Not yet implemented");
 
-/*
         int count = 0;
         final SQLiteDatabase db = mFavDbHelper.getReadableDatabase();
 
         int match = sUriMatcher.match(uri);
 
-        switch (match){
+        switch (match) {
             case TASKS:
-            count = db.delete(FavContract.FavEntry.TABLE_NAME, selection, selectionArgs);
-            break;
+                count = db.delete(FavContract.FavEntry.TABLE_NAME, selection, selectionArgs);
+                break;
 
             case TASK_WITH_ID:
 
 //                String id = uri.getLastPathSegment();
 //                count = db.delete(FavContract.FavEntry.TABLE_NAME, FavContract.FavEntry.COLUMN_MOVIE_ID + "=" + id, null);
-               break;
+                break;
 
+            default:
+                throw new UnsupportedOperationException("URI is not Matched");
         }
-*/
 
-
+        return count;
 
     }
 
