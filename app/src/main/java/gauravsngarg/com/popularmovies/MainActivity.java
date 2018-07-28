@@ -30,6 +30,7 @@ import gauravsngarg.com.popularmovies.data.FavContract;
 import gauravsngarg.com.popularmovies.data.FavListContract;
 import gauravsngarg.com.popularmovies.data.FavListDbHelper;
 import gauravsngarg.com.popularmovies.model.MovieItem;
+import gauravsngarg.com.popularmovies.receiver.ConnectivityReceiver;
 import gauravsngarg.com.popularmovies.utils.NetworkUtils;
 import gauravsngarg.com.popularmovies.utils.NetworkUtilsTopRated;
 
@@ -48,8 +49,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private String MENU_MOST_POPULAR_KEY;
     private String MENU_HIGH_RATED_KEY;
     private String MENU_SHOW_FAV_KEY;
-
-    private boolean isConnected;
 
     SQLiteDatabase mDb;
     FavListDbHelper dbHelper;
@@ -88,16 +87,16 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     protected void onStart() {
         super.onStart();
 
-        //checkConnection();
+        boolean isConnect = checkConnection();
 
-        if (!MENU_SHOW_FAV_VALUE) {
+        if (!MENU_SHOW_FAV_VALUE || !isConnect) {
             MENU_HIGH_RATED_VALUE = true;
             MENU_MOST_POPULAR_VALUE = true;
             MENU_SHOW_FAV_VALUE = false;
             new ShowFavMovieListTask().execute();
-        } else if (!MENU_MOST_POPULAR_VALUE)
+        } else if (!MENU_MOST_POPULAR_VALUE && isConnect)
             new ShowMovieListTask().execute(makeSearchQuery(1, 1));
-        else if (!MENU_HIGH_RATED_VALUE)
+        else if (!MENU_HIGH_RATED_VALUE && isConnect)
             new ShowMovieListTask().execute(makeSearchQuery(1, 2));
 
     }
@@ -126,28 +125,22 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         i.putExtra("rating", itemClicked.getMovieUserRating());
         i.putExtra("release_date", itemClicked.getMovieReleaseDate());
         i.putExtra("url", itemClicked.getMoviePosterPath());
-       // i.putExtra("favflag", !MENU_SHOW_FAV_VALUE);
 
         Log.d("Gaurav31", "Movie ID: " + itemClicked.getMovieId());
 
         startActivity(i);
     }
 
-//    @Override
-//    public void onNetworkConnectionChanged(boolean isConnected) {
-//
-//
-//    }
 
-   /* private boolean checkConnection(){
+    private boolean checkConnection(){
         boolean isConnect = ConnectivityReceiver.isConnected();
 
-        if(isConnect)
-            Toast.makeText(MainActivity.this, "You are connected to Internet", Toast.LENGTH_SHORT).show();
-            else
+        if(!isConnect)
             Toast.makeText(MainActivity.this, "Not connected to Internet", Toast.LENGTH_SHORT).show();
+
+
         return isConnect;
-    }*/
+    }
 
     public class ShowMovieListTask extends AsyncTask<URL, Void, String> {
 
@@ -309,13 +302,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (item.getItemId() == R.id.action_sortby_highrated) {
+        if (item.getItemId() == R.id.action_sortby_highrated && checkConnection()) {
 
             new ShowMovieListTask().execute(makeSearchQuery(1, 2));
             MENU_HIGH_RATED_VALUE = false;
             MENU_MOST_POPULAR_VALUE = true;
             return true;
-        } else if (item.getItemId() == R.id.action_sortby_mostpopular) {
+        } else if (item.getItemId() == R.id.action_sortby_mostpopular && checkConnection()) {
             new ShowMovieListTask().execute(makeSearchQuery(1, 1));
 
             MENU_HIGH_RATED_VALUE = true;
