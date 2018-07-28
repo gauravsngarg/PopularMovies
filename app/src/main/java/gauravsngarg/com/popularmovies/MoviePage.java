@@ -154,11 +154,11 @@ public class MoviePage extends AppCompatActivity implements LoaderManager.Loader
 
         Picasso.with(this).load(url_poster.toString()).into(iv_movieposter);
 
-        URL videoURL = NetworkUtilsGetVideos.buildUrl(movieId, getString(R.string.api_key));
+        URL videoURL = NetworkUtilsGetVideos.buildUrl(movieId, BuildConfig.API_KEY);
         Bundle queryVideosBundle = new Bundle();
         queryVideosBundle.putString(GET_Video_URL_EXTRA, videoURL.toString());
 
-        URL reviewsURL = NetworkUtilsGetReviews.buildUrl(movieId, getString(R.string.api_key));
+        URL reviewsURL = NetworkUtilsGetReviews.buildUrl(movieId, BuildConfig.API_KEY);
         Bundle queryReviewsBundle = new Bundle();
         queryReviewsBundle.putString(GET_Video_URL_EXTRA, reviewsURL.toString());
 

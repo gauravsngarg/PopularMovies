@@ -33,7 +33,7 @@ import gauravsngarg.com.popularmovies.model.MovieItem;
 import gauravsngarg.com.popularmovies.utils.NetworkUtils;
 import gauravsngarg.com.popularmovies.utils.NetworkUtilsTopRated;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieListitemClickListner {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieListitemClickListner{
 
     private RecyclerView mMoviesList;
     private List<MovieItem> list;
@@ -49,8 +49,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private String MENU_HIGH_RATED_KEY;
     private String MENU_SHOW_FAV_KEY;
 
+    private boolean isConnected;
+
     SQLiteDatabase mDb;
     FavListDbHelper dbHelper;
+
+    private static final String API_KEY = BuildConfig.API_KEY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     protected void onStart() {
         super.onStart();
 
+        //checkConnection();
+
         if (!MENU_SHOW_FAV_VALUE) {
             MENU_HIGH_RATED_VALUE = true;
             MENU_MOST_POPULAR_VALUE = true;
@@ -101,9 +107,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         URL url = null;
         if (order == 1)
-            url = NetworkUtils.buildUrl(getString(R.string.api_key), page);
+            url = NetworkUtils.buildUrl(API_KEY, page);
         else if (order == 2)
-            url = NetworkUtilsTopRated.buildUrl(getString(R.string.api_key), page);
+            url = NetworkUtilsTopRated.buildUrl(API_KEY, page);
 
         return url;
     }
@@ -126,6 +132,22 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         startActivity(i);
     }
+
+//    @Override
+//    public void onNetworkConnectionChanged(boolean isConnected) {
+//
+//
+//    }
+
+   /* private boolean checkConnection(){
+        boolean isConnect = ConnectivityReceiver.isConnected();
+
+        if(isConnect)
+            Toast.makeText(MainActivity.this, "You are connected to Internet", Toast.LENGTH_SHORT).show();
+            else
+            Toast.makeText(MainActivity.this, "Not connected to Internet", Toast.LENGTH_SHORT).show();
+        return isConnect;
+    }*/
 
     public class ShowMovieListTask extends AsyncTask<URL, Void, String> {
 
